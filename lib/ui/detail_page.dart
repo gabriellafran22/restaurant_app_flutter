@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/custom_widgets.dart';
+import 'package:restaurant_app/widgets/custom_widgets.dart';
 import 'package:restaurant_app/data/restaurant.dart';
 
 class DetailPage extends StatelessWidget {
   static const routeName = '/detail_page';
-  Restaurant restaurant;
+  final Restaurant restaurant;
 
   DetailPage({Key? key, required this.restaurant}) : super(key: key);
 
@@ -27,7 +27,7 @@ class DetailPage extends StatelessWidget {
                     backgroundColor: Colors.black12.withOpacity(0.6),
                     child: IconButton(
                       icon: const Icon(Icons.arrow_back),
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => Navigator.pop(context,),
                     ),
                   ),
                 )),
@@ -84,10 +84,10 @@ class DetailPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: listFnB(restaurant.menus.foods),
+                        child: _listFood(restaurant.menus.foods),
                       ),
                       Expanded(
-                        child: listFnB(restaurant.menus.drinks),
+                        child: _listDrink(restaurant.menus.drinks),
                       ),
                     ],
                   ),
@@ -101,20 +101,38 @@ class DetailPage extends StatelessWidget {
   }
 }
 
-Widget listFnB(List<Food> drink) {
-  List<Widget> text = [];
+Widget _listFood(List<Food> food) {
+  List<Widget> widget = [];
   int num = 1;
 
-  for (var name in drink) {
-    text.add(const SizedBox(
+  for (var name in food) {
+    widget.add(const SizedBox(
       height: 5,
     ));
-    text.add(contentText("$num. ${name.name}"));
+    widget.add(contentText("$num. ${name.name}"));
     num++;
   }
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
-    children: text,
+    children: widget,
+  );
+}
+
+Widget _listDrink(List<Drink> drink) {
+  List<Widget> widget = [];
+  int num = 1;
+
+  for (var name in drink) {
+    widget.add(const SizedBox(
+      height: 5,
+    ));
+    widget.add(contentText("$num. ${name.name}"));
+    num++;
+  }
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: widget,
   );
 }

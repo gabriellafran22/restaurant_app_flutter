@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/custom_widgets.dart';
+import 'package:restaurant_app/widgets/custom_widgets.dart';
 import 'package:restaurant_app/data/restaurant.dart';
 import 'package:restaurant_app/ui/about_page.dart';
 import 'package:restaurant_app/ui/detail_page.dart';
@@ -104,7 +104,8 @@ Widget _restaurantViewCard(Restaurant restaurant) {
                     )
                   ],
                 ),
-              )),
+              )
+          ),
         ],
       ),
     ),
