@@ -4,6 +4,8 @@ import 'package:restaurant_app/data/restaurant.dart';
 import 'package:restaurant_app/ui/about_page.dart';
 import 'package:restaurant_app/ui/detail_page.dart';
 import 'package:restaurant_app/ui/home_page.dart';
+import 'package:restaurant_app/ui/no_internet_page.dart';
+import 'package:restaurant_app/ui/search_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,8 +27,9 @@ class MyApp extends StatelessWidget {
         HomePage.routeName: (context) => const HomePage(),
         AboutPage.routeName: (context) => const AboutPage(),
         DetailPage.routeName: (context) => DetailPage(
-            restaurant:
-                ModalRoute.of(context)?.settings.arguments as Restaurant),
+           id: ModalRoute.of(context)?.settings.arguments as String,),
+        SearchPage.routeName: (context) => const SearchPage(),
+        NoInternetPage.routeName: (context) => NoInternetPage(),
       },
     );
   }

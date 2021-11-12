@@ -1,113 +1,56 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/widgets/custom_widgets.dart';
-import 'package:restaurant_app/data/restaurant.dart';
+import 'package:provider/provider.dart';
+import 'package:restaurant_app/data/api/api_service.dart';
+import 'package:restaurant_app/provider/restaurant_provider.dart';
 import 'package:restaurant_app/ui/about_page.dart';
-import 'package:restaurant_app/ui/detail_page.dart';
+import 'package:restaurant_app/ui/restaurant_list.dart';
+import 'package:restaurant_app/ui/search_page.dart';
+import 'package:restaurant_app/widgets/custom_widgets.dart';
 
-class HomePage extends StatelessWidget {
+
+class HomePage extends StatefulWidget {
   static const routeName = '/home_page';
 
   const HomePage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: titleText('Restaurant App'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.info_outline),
-            onPressed: () => Navigator.pushNamed(context, AboutPage.routeName),
-          ),
-        ],
-      ),
-      body: FutureBuilder<String>(
-          future: DefaultAssetBundle.of(context)
-              .loadString('assets/local_restaurant.json'),
-          builder: (context, snapshot) {
-            final List<Restaurant> restaurants = parseRestaurant(snapshot.data);
-            return ListView.builder(
-                itemCount: restaurants.length,
-                scrollDirection: Axis.vertical,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.pushNamed(context, DetailPage.routeName,
-                              arguments: restaurants[index]);
-                        },
-                        child: _restaurantViewCard(restaurants[index]),
-                      ),
-                      const Divider(
-                        thickness: 2,
-                        height: 0,
-                      )
-                    ],
-                  );
-                });
-          }),
-    );
-  }
+  _HomePageState createState() => _HomePageState();
 }
 
-Widget _restaurantViewCard(Restaurant restaurant) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-    child: SizedBox(
-      height: 100,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            flex: 1,
-            child: Hero(
-                tag: restaurant.pictureId,
-                child: Image.network(restaurant.pictureId)),
+class _HomePageState extends State<HomePage> {
+  @override
+  Widget build(BuildContext context) {
+      return Scaffold(
+        appBar: AppBar(
+          title: titleText('Restaurant App'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () => Navigator.pushNamed(context, SearchPage.routeName),
+            ),
+            IconButton(
+              icon: const Icon(Icons.info_outline),
+              onPressed: () => Navigator.pushNamed(context, AboutPage.routeName),
+            ),
+          ],
+        ),
+        body: Center(
+          child: StreamBuilder(
+            stream: Connectivity().onConnectivityChanged,
+            builder: (BuildContext context, AsyncSnapshot<ConnectivityResult> snapshot) {
+              if (snapshot.hasData && snapshot.data != ConnectivityResult.none) {
+                return ChangeNotifierProvider<RestaurantProvider>(
+                  create: (_) => RestaurantProvider(apiService: ApiService()),
+                  child: RestaurantList(),
+                );
+              }
+              else {
+                return noInternet();
+              }
+            },
           ),
-          Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    titleText(restaurant.name),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      restaurant.description,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.justify,
-                      style: const TextStyle(
-                        fontSize: 13,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        iconAndText(
-                            Icons.location_city, restaurant.city, Colors.grey),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        iconAndText(Icons.star, restaurant.rating.toString(),
-                            Colors.yellow),
-                      ],
-                    )
-                  ],
-                ),
-              )
-          ),
-        ],
-      ),
-    ),
-  );
+        ),
+    );
+  }
 }
