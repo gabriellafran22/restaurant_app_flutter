@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
             if (snapshot.hasData && snapshot.data != ConnectivityResult.none) {
               return ChangeNotifierProvider<RestaurantProvider>(
                 create: (_) => RestaurantProvider(apiService: ApiService()),
-                child: RestaurantList(),
+                child: const RestaurantList(),
               );
             } else {
               return iconAndTextColumn(

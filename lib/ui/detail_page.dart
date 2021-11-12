@@ -10,50 +10,56 @@ class DetailPage extends StatefulWidget {
   static const routeName = '/detail_page';
   final String id;
 
-  DetailPage({Key? key, required this.id}) : super(key: key);
+  const DetailPage({Key? key, required this.id}) : super(key: key);
 
   @override
   _DetailPageState createState() => _DetailPageState();
 }
 
 class _DetailPageState extends State<DetailPage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ChangeNotifierProvider<RestaurantProvider>(
-            create: (_) => RestaurantProvider.detail(apiService: ApiService(), id: widget.id),
-            child: Consumer<RestaurantProvider>(
-              builder: (context, state, _) {
-                if (state.state == ResultState.Loading) {
-                  return Center(child: JumpingDotsProgressIndicator(fontSize: 60,),);
-                }
-                else if (state.state == ResultState.HasData) {
-                  return _restaurantDetailView(state.resultDetail.restaurant, context);
-                }
-                else if (state.state == ResultState.NoData) {
-                  return Center(child: Text(state.message));
-                } else if (state.state == ResultState.Error) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.error_outline, size: 50,),
-                        contentText(state.message),
-                      ],
-                    ),
-                  );
-                } else {
-                  return Center(child: Text(''));
-                }
-              },
-            ),
-          )
-    );
+        body: ChangeNotifierProvider<RestaurantProvider>(
+      create: (_) =>
+          RestaurantProvider.detail(apiService: ApiService(), id: widget.id),
+      child: Consumer<RestaurantProvider>(
+        builder: (context, state, _) {
+          if (state.state == ResultState.Loading) {
+            return Center(
+              child: JumpingDotsProgressIndicator(
+                fontSize: 60,
+              ),
+            );
+          } else if (state.state == ResultState.HasData) {
+            return _restaurantDetailView(
+                state.resultDetail.restaurant, context);
+          } else if (state.state == ResultState.NoData) {
+            return Center(child: Text(state.message));
+          } else if (state.state == ResultState.Error) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.error_outline,
+                    size: 50,
+                  ),
+                  contentText(state.message),
+                ],
+              ),
+            );
+          } else {
+            return const Center(child: Text(''));
+          }
+        },
+      ),
+    ));
   }
 }
 
-Widget _restaurantDetailView(RestaurantDetail restaurant, BuildContext context) {
+Widget _restaurantDetailView(
+    RestaurantDetail restaurant, BuildContext context) {
   return SingleChildScrollView(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -62,18 +68,21 @@ Widget _restaurantDetailView(RestaurantDetail restaurant, BuildContext context) 
           children: <Widget>[
             Hero(
                 tag: restaurant.pictureId,
-                child: Image.network("https://restaurant-api.dicoding.dev/images/medium/${restaurant.pictureId}")),
+                child: Image.network(
+                    "https://restaurant-api.dicoding.dev/images/medium/${restaurant.pictureId}")),
             SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: CircleAvatar(
-                    backgroundColor: Colors.black12.withOpacity(0.6),
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      onPressed: () => Navigator.pop(context,),
-                    ),
+              padding: const EdgeInsets.all(10.0),
+              child: CircleAvatar(
+                backgroundColor: Colors.black12.withOpacity(0.6),
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.pop(
+                    context,
                   ),
-                )),
+                ),
+              ),
+            )),
           ],
         ),
         Padding(
@@ -81,11 +90,9 @@ Widget _restaurantDetailView(RestaurantDetail restaurant, BuildContext context) 
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
-                  restaurant.name,
+              Text(restaurant.name,
                   style: const TextStyle(
-                      fontSize: 30, fontWeight: FontWeight.bold)
-              ),
+                      fontSize: 30, fontWeight: FontWeight.bold)),
               const SizedBox(
                 height: 5,
               ),
@@ -103,7 +110,8 @@ Widget _restaurantDetailView(RestaurantDetail restaurant, BuildContext context) 
               const SizedBox(
                 height: 5,
               ),
-              iconAndTextRow(Icons.location_on, restaurant.address, Colors.black87),
+              iconAndTextRow(
+                  Icons.location_on, restaurant.address, Colors.black87),
               const SizedBox(
                 height: 5,
               ),
@@ -119,39 +127,47 @@ Widget _restaurantDetailView(RestaurantDetail restaurant, BuildContext context) 
               const SizedBox(
                 height: 20,
               ),
-              titleText('Menu'),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: titleText("Foods"),
-                  ),
-                  Expanded(
-                    child: titleText("Drinks"),
-                  ),
-                ],
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: _listFood(restaurant.menus.foods),
-                  ),
-                  Expanded(
-                    child: _listDrink(restaurant.menus.drinks),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              titleText('Customer Reviews'),
-              _customerReview(restaurant.customerReviews),
-              // _tabSection(context, restaurant),
-              // _tabSection(restaurantDetail: restaurant,),
             ],
+          ),
+        ),
+        _tabSection(context, restaurant),
+      ],
+    ),
+  );
+}
+
+Widget _tabSection(BuildContext context, RestaurantDetail restaurant) {
+  return DefaultTabController(
+    length: 3,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Container(
+          color: Colors.red,
+          child: const TabBar(
+              indicatorColor: Colors.black,
+              labelColor: Colors.black,
+              tabs: [
+                Tab(text: "Foods"),
+                Tab(text: "Drinks"),
+                Tab(text: "Reviews"),
+              ]),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: SizedBox(
+            height: 300,
+            child: TabBarView(children: [
+              Container(
+                child: _listFood(restaurant.menus.foods),
+              ),
+              Container(
+                child: _listDrink(restaurant.menus.drinks),
+              ),
+              Container(
+                child: _customerReview(restaurant.customerReviews),
+              ),
+            ]),
           ),
         ),
       ],
@@ -164,7 +180,7 @@ Widget _listCategory(List<Category> category) {
 
   for (var name in category) {
     text += name.name;
-    if (name.name != category.last.name){
+    if (name.name != category.last.name) {
       text += ", ";
     }
   }
@@ -173,61 +189,60 @@ Widget _listCategory(List<Category> category) {
 }
 
 Widget _listFood(List<Foods> food) {
-  List<Widget> widget = [];
-  int num = 1;
-
-  for (var name in food) {
-    widget.add(const SizedBox(
-      height: 5,
-    ));
-    widget.add(contentText("$num. ${name.name}"));
-    num++;
-  }
-
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: widget,
+  return ListView.builder(
+    padding: EdgeInsets.zero,
+    shrinkWrap: true,
+    itemBuilder: (context, index) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          const SizedBox(
+            height: 5,
+          ),
+          contentText(food[index].name),
+        ],
+      );
+    },
+    itemCount: food.length,
   );
 }
 
 Widget _listDrink(List<Drinks> drink) {
-  List<Widget> widget = [];
-  int num = 1;
-
-  for (var name in drink) {
-    widget.add(const SizedBox(
-      height: 5,
-    ));
-    widget.add(contentText("$num. ${name.name}"));
-    num++;
-  }
-
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: widget,
+  return ListView.builder(
+    padding: EdgeInsets.zero,
+    shrinkWrap: true,
+    itemBuilder: (context, index) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          const SizedBox(
+            height: 5,
+          ),
+          contentText(drink[index].name),
+        ],
+      );
+    },
+    itemCount: drink.length,
   );
 }
 
 Widget _customerReview(List<CustomerReview> reviews) {
-  List<Widget> widget = [];
-
-  for (var review in reviews) {
-    widget.add(
-      Column(
+  return ListView.builder(
+    padding: EdgeInsets.zero,
+    shrinkWrap: true,
+    itemBuilder: (context, index) {
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const SizedBox(
-            height: 10,
-          ),
-          reviewerReviewText(review.review),
+          reviewerReviewText(reviews[index].review),
           const SizedBox(
             height: 5,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              reviewerNameText(review.name),
-              reviewerDateText(review.date),
+              reviewerNameText(reviews[index].name),
+              reviewerDateText(reviews[index].date),
             ],
           ),
           const SizedBox(
@@ -237,160 +252,12 @@ Widget _customerReview(List<CustomerReview> reviews) {
             thickness: 2,
             height: 0,
           ),
+          const SizedBox(
+            height: 5,
+          ),
         ],
-      )
-    );
-  }
-
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: widget,
+      );
+    },
+    itemCount: reviews.length,
   );
 }
-
-// class _tabSection extends StatefulWidget {
-//   RestaurantDetail restaurantDetail;
-//
-//   _tabSection({required this.restaurantDetail});
-//
-//   @override
-//   _tabSectionState createState() => _tabSectionState();
-// }
-//
-// class _tabSectionState extends State<_tabSection> with SingleTickerProviderStateMixin {
-//   late TabController tabController;
-//
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     tabController = new TabController(length: 2, vsync: this);
-//   }
-//
-//   @override
-//   void dispose() {
-//     tabController.dispose();
-//     super.dispose();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     RestaurantDetail restaurant = widget.restaurantDetail;
-//
-//     return  DefaultTabController(
-//       length: 2,
-//       child: Column(
-//         mainAxisSize: MainAxisSize.min,
-//         children: <Widget>[
-//           Container(
-//             child: TabBar(
-//               controller: tabController,
-//                 labelColor: Colors.black,
-//                 tabs: [
-//                   Tab(text: "Menu"),
-//                   Tab(text: "Customer Reviews"),
-//                 ]),
-//           ),
-//           Container(
-//             //Add this to give height
-//             height: 300,
-//             child: TabBarView(
-//                 children: [
-//                   Scrollbar(
-//                       child:  Container(
-//                           child: Column(
-//                             children: [
-//                               SizedBox(
-//                                 height: 10,
-//                               ),
-//                               Row(
-//                                 children: [
-//                                   Expanded(
-//                                     child: titleText("Foods"),
-//                                   ),
-//                                   Expanded(
-//                                     child: titleText("Drinks"),
-//                                   ),
-//                                 ],
-//                               ),
-//                               Row(
-//                                 crossAxisAlignment: CrossAxisAlignment.start,
-//                                 children: [
-//                                   Expanded(
-//                                     child: _listFood(restaurant.menus.foods),
-//                                   ),
-//                                   Expanded(
-//                                     child: _listDrink(restaurant.menus.drinks),
-//                                   ),
-//                                 ],
-//                               ),
-//                             ],
-//                           )
-//                       ),
-//                   ),
-//                   Container(
-//                     child: Text('aaa'),
-//                   ),
-//             ]),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-// }
-
-// Widget _tabSection(BuildContext context, RestaurantDetail restaurant) {
-//   return DefaultTabController(
-//     length: 2,
-//     child: Column(
-//       mainAxisSize: MainAxisSize.min,
-//       children: <Widget>[
-//         Container(
-//           child: TabBar(
-//               labelColor: Colors.black,
-//               tabs: [
-//             Tab(text: "Home"),
-//             Tab(text: "Articles"),
-//           ]),
-//         ),
-//         Container(
-//           //Add this to give height
-//           height: 300,
-//           child: TabBarView(children: [
-//             Container(
-//               child: Column(
-//                 children: [
-//                   Row(
-//                     children: [
-//                       Expanded(
-//                         child: titleText("Foods"),
-//                       ),
-//                       Expanded(
-//                         child: titleText("Drinks"),
-//                       ),
-//                     ],
-//                   ),
-//                   Row(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: [
-//                       Expanded(
-//                         child: _listFood(restaurant.menus.foods),
-//                       ),
-//                       Expanded(
-//                         child: _listDrink(restaurant.menus.drinks),
-//                       ),
-//                     ],
-//                   ),
-//                 ],
-//               )
-//             ),
-//             Container(
-//               child: _customerReview(restaurant.customerReviews),
-//             ),
-//           ]),
-//         ),
-//       ],
-//     ),
-//   );
-// }
