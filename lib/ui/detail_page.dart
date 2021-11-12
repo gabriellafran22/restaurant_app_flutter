@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
-import 'package:restaurant_app/data/restaurant.dart';
+import 'package:restaurant_app/data/model/restaurant.dart';
 import 'package:restaurant_app/provider/restaurant_provider.dart';
 import 'package:restaurant_app/widgets/custom_widgets.dart';
 
@@ -91,19 +91,19 @@ Widget _restaurantDetailView(RestaurantDetail restaurant, BuildContext context) 
               ),
               Row(
                 children: [
-                  iconAndText(
+                  iconAndTextRow(
                       Icons.location_city, restaurant.city, Colors.grey),
                   const SizedBox(
                     width: 10,
                   ),
-                  iconAndText(Icons.star, restaurant.rating.toString(),
+                  iconAndTextRow(Icons.star, restaurant.rating.toString(),
                       Colors.yellowAccent),
                 ],
               ),
               const SizedBox(
                 height: 5,
               ),
-              iconAndText(Icons.location_on, restaurant.address, Colors.black87),
+              iconAndTextRow(Icons.location_on, restaurant.address, Colors.black87),
               const SizedBox(
                 height: 5,
               ),
@@ -169,7 +169,7 @@ Widget _listCategory(List<Category> category) {
     }
   }
 
-  return iconAndText(Icons.category_rounded, text, Colors.black87);
+  return iconAndTextRow(Icons.category_rounded, text, Colors.black87);
 }
 
 Widget _listFood(List<Foods> food) {

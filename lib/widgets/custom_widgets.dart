@@ -52,7 +52,7 @@ Widget reviewerNameText(String text) {
   );
 }
 
-Widget iconAndText(IconData icon, String text, Color color) {
+Widget iconAndTextRow(IconData icon, String text, Color color) {
   return Row(
     children: [
       Icon(
@@ -69,15 +69,17 @@ Widget iconAndText(IconData icon, String text, Color color) {
   );
 }
 
-Widget noInternet() {
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: <Widget>[
-      const Icon(
-        Icons.wifi_off,
-        size: 50,
-      ),
-      contentText('Please check your internet conncetion'),
-    ],
+Widget iconAndTextColumn(IconData icon, String text) {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Icon(
+          icon,
+          size: 50,
+        ),
+        contentText(text),
+      ],
+    ),
   );
 }
