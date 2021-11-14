@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/provider/restaurant_provider.dart';
 import 'package:restaurant_app/ui/detail_page.dart';
-import 'package:restaurant_app/ui/restaurant_list.dart';
 import 'package:restaurant_app/widgets/custom_widgets.dart';
+import 'package:restaurant_app/widgets/restaurant_card.dart';
 
 class SearchPage extends StatefulWidget {
   static const routeName = '/search_page';
@@ -55,14 +55,14 @@ class _SearchPageState extends State<SearchPage> {
                       setState(() {
                         search = text;
                         state.fetchSearchRestaurant(search);
-                        resultHandler(context, state);
+                        _resultHandler(context, state);
                       });
                     },
                     onSubmitted: (text) {
                       setState(() {
                         search = text;
                         state.fetchSearchRestaurant(search);
-                        resultHandler(context, state);
+                        _resultHandler(context, state);
                       });
                     },
                   ),
@@ -71,15 +71,21 @@ class _SearchPageState extends State<SearchPage> {
             ),
             body: search.isEmpty
                 ? iconAndTextColumn(Icons.search, 'Search a Menu or Restaurant')
-                : resultHandler(context, state),
+                : _resultHandler(context, state),
           );
         },
       ),
     );
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
 }
 
-Widget resultHandler(BuildContext context, RestaurantProvider state) {
+Widget _resultHandler(BuildContext context, RestaurantProvider state) {
   if (state.state == ResultState.Loading) {
     return Center(
       child: JumpingDotsProgressIndicator(
@@ -113,7 +119,7 @@ Widget resultHandler(BuildContext context, RestaurantProvider state) {
           );
         });
   } else if (state.state == ResultState.NoData) {
-    return iconAndTextColumn(Icons.error_outline, '${state.message} Found');
+    return iconAndTextColumn(Icons.error_outline, '${state.message} Restaurant Found');
   } else if (state.state == ResultState.Error) {
     return iconAndTextColumn(Icons.error_outline, state.message);
   } else {
