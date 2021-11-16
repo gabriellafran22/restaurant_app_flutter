@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_offline/flutter_offline.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
@@ -9,6 +10,7 @@ import 'package:restaurant_app/widgets/restaurant_card.dart';
 
 class SearchPage extends StatefulWidget {
   static const routeName = '/search_page';
+  static const String searchPageTitle = 'Search';
 
   const SearchPage({Key? key}) : super(key: key);
 
@@ -69,9 +71,23 @@ class _SearchPageState extends State<SearchPage> {
                 ),
               ),
             ),
-            body: search.isEmpty
-                ? iconAndTextColumn(Icons.search, 'Search a Menu or Restaurant')
-                : _resultHandler(context, state),
+            body: OfflineBuilder(
+              connectivityBuilder: (BuildContext context,
+                  ConnectivityResult connectivity, Widget child) {
+                final bool connected = connectivity != ConnectivityResult.none;
+                return connected
+                    ? search.isEmpty
+                        ? iconAndTextColumn(
+                            Icons.search, 'Search a Menu or Restaurant')
+                        : _resultHandler(context, state)
+                    : iconAndTextColumn(Icons.wifi_off,
+                        'Please check your internet connection');
+              },
+              child: search.isEmpty
+                  ? iconAndTextColumn(
+                      Icons.search, 'Search a Menu or Restaurant')
+                  : _resultHandler(context, state),
+            ),
           );
         },
       ),
@@ -86,13 +102,13 @@ class _SearchPageState extends State<SearchPage> {
 }
 
 Widget _resultHandler(BuildContext context, RestaurantProvider state) {
-  if (state.state == ResultState.Loading) {
+  if (state.state == ResultState.loading) {
     return Center(
       child: JumpingDotsProgressIndicator(
         fontSize: 60,
       ),
     );
-  } else if (state.state == ResultState.HasData) {
+  } else if (state.state == ResultState.hasData) {
     var restaurant = state.resultSearch.restaurants;
     return ListView.builder(
         shrinkWrap: true,
@@ -109,7 +125,7 @@ Widget _resultHandler(BuildContext context, RestaurantProvider state) {
                   Navigator.pushNamed(context, DetailPage.routeName,
                       arguments: restaurant[index].id);
                 },
-                child: restaurantViewCard(restaurant[index]),
+                child: restaurantCard(restaurant[index]),
               ),
               const Divider(
                 thickness: 2,
@@ -118,9 +134,10 @@ Widget _resultHandler(BuildContext context, RestaurantProvider state) {
             ],
           );
         });
-  } else if (state.state == ResultState.NoData) {
-    return iconAndTextColumn(Icons.error_outline, '${state.message} Restaurant Found');
-  } else if (state.state == ResultState.Error) {
+  } else if (state.state == ResultState.noData) {
+    return iconAndTextColumn(
+        Icons.error_outline, '${state.message} Restaurant Found');
+  } else if (state.state == ResultState.error) {
     return iconAndTextColumn(Icons.error_outline, state.message);
   } else {
     return const Center(child: Text(''));

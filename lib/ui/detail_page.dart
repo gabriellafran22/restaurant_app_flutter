@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_offline/flutter_offline.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/data/model/restaurant.dart';
+import 'package:restaurant_app/provider/database_provider.dart';
 import 'package:restaurant_app/provider/restaurant_provider.dart';
+import 'package:restaurant_app/utils.dart';
 import 'package:restaurant_app/widgets/custom_widgets.dart';
 
 class DetailPage extends StatefulWidget {
@@ -20,41 +23,86 @@ class _DetailPageState extends State<DetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: ChangeNotifierProvider<RestaurantProvider>(
-      create: (_) =>
-          RestaurantProvider.detail(apiService: ApiService(), id: widget.id),
-      child: Consumer<RestaurantProvider>(
-        builder: (context, state, _) {
-          if (state.state == ResultState.Loading) {
-            return Center(
-              child: JumpingDotsProgressIndicator(
-                fontSize: 60,
-              ),
-            );
-          } else if (state.state == ResultState.HasData) {
-            return _restaurantDetailView(
-                state.resultDetail.restaurant, context);
-          } else if (state.state == ResultState.NoData) {
-            return Center(child: Text(state.message));
-          } else if (state.state == ResultState.Error) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.error_outline,
-                    size: 50,
+      body: OfflineBuilder(
+        connectivityBuilder: (BuildContext context,
+            ConnectivityResult connectivity, Widget child) {
+          final bool connected = connectivity != ConnectivityResult.none;
+          return connected
+              ? ChangeNotifierProvider<RestaurantProvider>(
+                  create: (_) => RestaurantProvider.detail(
+                      apiService: ApiService(), id: widget.id),
+                  child: Consumer<RestaurantProvider>(
+                    builder: (context, state, _) {
+                      if (state.state == ResultState.loading) {
+                        return Center(
+                          child: JumpingDotsProgressIndicator(
+                            fontSize: 60,
+                          ),
+                        );
+                      } else if (state.state == ResultState.hasData) {
+                        return _restaurantDetailView(
+                            state.resultDetail.restaurant, context);
+                      } else if (state.state == ResultState.noData) {
+                        return Center(child: Text(state.message));
+                      } else if (state.state == ResultState.error) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.error_outline,
+                                size: 50,
+                              ),
+                              contentText(state.message),
+                            ],
+                          ),
+                        );
+                      } else {
+                        return const Center(child: Text(''));
+                      }
+                    },
                   ),
-                  contentText(state.message),
-                ],
-              ),
-            );
-          } else {
-            return const Center(child: Text(''));
-          }
+                )
+              : iconAndTextColumn(
+                  Icons.wifi_off, 'Please check your internet connection');
         },
+        child: ChangeNotifierProvider<RestaurantProvider>(
+          create: (_) => RestaurantProvider.detail(
+              apiService: ApiService(), id: widget.id),
+          child: Consumer<RestaurantProvider>(
+            builder: (context, state, _) {
+              if (state.state == ResultState.loading) {
+                return Center(
+                  child: JumpingDotsProgressIndicator(
+                    fontSize: 60,
+                  ),
+                );
+              } else if (state.state == ResultState.hasData) {
+                return _restaurantDetailView(
+                    state.resultDetail.restaurant, context);
+              } else if (state.state == ResultState.noData) {
+                return Center(child: Text(state.message));
+              } else if (state.state == ResultState.error) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.error_outline,
+                        size: 50,
+                      ),
+                      contentText(state.message),
+                    ],
+                  ),
+                );
+              } else {
+                return const Center(child: Text(''));
+              }
+            },
+          ),
+        ),
       ),
-    ));
+    );
   }
 }
 
@@ -67,22 +115,24 @@ Widget _restaurantDetailView(
         Stack(
           children: <Widget>[
             Hero(
-                tag: restaurant.pictureId,
-                child: Image.network(
-                    "https://restaurant-api.dicoding.dev/images/medium/${restaurant.pictureId}")),
+              tag: restaurant.pictureId,
+              child: Image.network(
+                  "https://restaurant-api.dicoding.dev/images/medium/${restaurant.pictureId}"),
+            ),
             SafeArea(
-                child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: CircleAvatar(
-                backgroundColor: Colors.black12.withOpacity(0.6),
-                child: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.pop(
-                    context,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: CircleAvatar(
+                  backgroundColor: Colors.black12.withOpacity(0.6),
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () => Navigator.pop(
+                      context,
+                    ),
                   ),
                 ),
               ),
-            )),
+            ),
           ],
         ),
         Padding(
@@ -90,9 +140,17 @@ Widget _restaurantDetailView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(restaurant.name,
-                  style: const TextStyle(
-                      fontSize: 30, fontWeight: FontWeight.bold)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    restaurant.name,
+                    style: const TextStyle(
+                        fontSize: 30, fontWeight: FontWeight.bold),
+                  ),
+                  _favoriteButton(restaurant.id, restaurant),
+                ],
+              ),
               const SizedBox(
                 height: 5,
               ),
@@ -133,6 +191,32 @@ Widget _restaurantDetailView(
         _tabSection(context, restaurant),
       ],
     ),
+  );
+}
+
+Widget _favoriteButton(String id, RestaurantDetail restaurant) {
+  return Consumer<DatabaseProvider>(
+    builder: (context, state, child) {
+      return FutureBuilder<bool>(
+        future: state.isFavorited(id),
+        builder: (context, snapshot) {
+          var isFavorited = snapshot.data ?? false;
+          return FloatingActionButton(
+            child: isFavorited
+                ? const Icon(Icons.favorite)
+                : const Icon(Icons.favorite_border),
+            onPressed: () {
+              if (isFavorited) {
+                state.deleteFavoriteRestaurant(id);
+              } else {
+                state.addFavoriteRestaurant(
+                    convertRestaurantDetailToRestaurant(restaurant));
+              }
+            },
+          );
+        },
+      );
+    },
   );
 }
 

@@ -13,13 +13,13 @@ class RestaurantList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<RestaurantProvider>(
       builder: (context, state, _) {
-        if (state.state == ResultState.Loading) {
+        if (state.state == ResultState.loading) {
           return Center(
             child: JumpingDotsProgressIndicator(
               fontSize: 60,
             ),
           );
-        } else if (state.state == ResultState.HasData) {
+        } else if (state.state == ResultState.hasData) {
           var restaurant = state.result.restaurants;
           return ListView.builder(
               shrinkWrap: true,
@@ -36,7 +36,7 @@ class RestaurantList extends StatelessWidget {
                         Navigator.pushNamed(context, DetailPage.routeName,
                             arguments: restaurant[index].id);
                       },
-                      child: restaurantViewCard(restaurant[index]),
+                      child: restaurantCard(restaurant[index]),
                     ),
                     const Divider(
                       thickness: 2,
@@ -44,10 +44,11 @@ class RestaurantList extends StatelessWidget {
                     )
                   ],
                 );
-              });
-        } else if (state.state == ResultState.NoData) {
+              },
+          );
+        } else if (state.state == ResultState.noData) {
           return iconAndTextColumn(Icons.error_outline, '${state.message} Found');
-        } else if (state.state == ResultState.Error) {
+        } else if (state.state == ResultState.error) {
           return iconAndTextColumn(Icons.error_outline, state.message);
         } else {
           return const Center(child: Text(''));

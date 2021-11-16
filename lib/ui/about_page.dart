@@ -14,17 +14,16 @@ class AboutPage extends StatelessWidget {
         title: titleText('About'),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              titleText(
-                'About App',
-              ),
-              const SizedBox(height: 10),
-              contentText(
-                  'This is an app that shows a list of restaurants. It is build using flutter with the purpose of '
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            titleText(
+              'About App',
+            ),
+            const SizedBox(height: 10),
+            contentText(
+                'This is an app that shows a list of restaurants. It is build using flutter with the purpose of '
                   'a submission project to learn the fundamentals of using flutter.\n'
                   'Last Updated on 9 November 2021.'),
               const SizedBox(height: 20),
@@ -64,7 +63,6 @@ class AboutPage extends StatelessWidget {
               ),
             ],
           ),
-        ),
       ),
     );
   }

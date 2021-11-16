@@ -3,7 +3,7 @@ import 'package:restaurant_app/data/model/restaurant.dart';
 
 import 'custom_widgets.dart';
 
-Widget restaurantViewCard(Restaurant restaurant) {
+Widget restaurantCard(Restaurant restaurant) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
     child: SizedBox(
@@ -16,7 +16,7 @@ Widget restaurantViewCard(Restaurant restaurant) {
             child: Hero(
                 tag: restaurant.pictureId,
                 child: Image.network(
-                    "https://restaurant-api.dicoding.dev/images/small/${restaurant.pictureId}")),
+                    "https://restaurant-api.dicoding.dev/images/medium/${restaurant.pictureId}")),
           ),
           Expanded(
             flex: 2,

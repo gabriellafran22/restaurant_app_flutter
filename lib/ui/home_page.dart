@@ -1,56 +1,82 @@
-import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_offline/flutter_offline.dart';
+import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
-import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/provider/restaurant_provider.dart';
-import 'package:restaurant_app/ui/about_page.dart';
-import 'package:restaurant_app/ui/restaurant_list.dart';
-import 'package:restaurant_app/ui/search_page.dart';
 import 'package:restaurant_app/widgets/custom_widgets.dart';
+import 'package:restaurant_app/widgets/restaurant_card.dart';
 
-class HomePage extends StatefulWidget {
-  static const routeName = '/home_page';
+import 'detail_page.dart';
+
+class HomePage extends StatelessWidget {
+  static const String homePageTitle = 'Home';
 
   const HomePage({Key? key}) : super(key: key);
 
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: titleText('Restaurant App'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () => Navigator.pushNamed(context, SearchPage.routeName),
-          ),
-          IconButton(
-            icon: const Icon(Icons.info_outline),
-            onPressed: () => Navigator.pushNamed(context, AboutPage.routeName),
-          ),
-        ],
       ),
-      body: Center(
-        child: StreamBuilder(
-          stream: Connectivity().onConnectivityChanged,
-          builder: (BuildContext context,
-              AsyncSnapshot<ConnectivityResult> snapshot) {
-            if (snapshot.hasData && snapshot.data != ConnectivityResult.none) {
-              return ChangeNotifierProvider<RestaurantProvider>(
-                create: (_) => RestaurantProvider(apiService: ApiService()),
-                child: const RestaurantList(),
-              );
-            } else {
-              return iconAndTextColumn(
+      body: OfflineBuilder(
+        connectivityBuilder: (BuildContext context,
+            ConnectivityResult connectivity, Widget child) {
+          final bool connected = connectivity != ConnectivityResult.none;
+          return connected
+              ? _restaurantList()
+              : iconAndTextColumn(
                   Icons.wifi_off, 'Please check your internet connection');
-            }
-          },
-        ),
+        },
+        child: _restaurantList(),
       ),
     );
   }
+}
+
+Widget _restaurantList() {
+  return Consumer<RestaurantProvider>(
+    builder: (context, state, _) {
+      if (state.state == ResultState.loading) {
+        return Center(
+          child: JumpingDotsProgressIndicator(
+            fontSize: 60,
+          ),
+        );
+      } else if (state.state == ResultState.hasData) {
+        var restaurant = state.result.restaurants;
+        return ListView.builder(
+          shrinkWrap: true,
+          itemCount: restaurant.length,
+          scrollDirection: Axis.vertical,
+          itemBuilder: (context, index) {
+            return Column(
+              children: [
+                const SizedBox(
+                  height: 5,
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, DetailPage.routeName,
+                        arguments: restaurant[index].id);
+                  },
+                  child: restaurantCard(restaurant[index]),
+                ),
+                const Divider(
+                  thickness: 2,
+                  height: 0,
+                )
+              ],
+            );
+          },
+        );
+      } else if (state.state == ResultState.noData) {
+        return iconAndTextColumn(Icons.error_outline, '${state.message} Found');
+      } else if (state.state == ResultState.error) {
+        return iconAndTextColumn(Icons.error_outline, state.message);
+      } else {
+        return const Center(child: Text(''));
+      }
+    },
+  );
 }
