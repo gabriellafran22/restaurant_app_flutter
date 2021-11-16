@@ -6,7 +6,7 @@ import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/data/model/restaurant.dart';
 import 'package:restaurant_app/provider/database_provider.dart';
 import 'package:restaurant_app/provider/restaurant_provider.dart';
-import 'package:restaurant_app/utils.dart';
+import 'package:restaurant_app/utils/utils.dart';
 import 'package:restaurant_app/widgets/custom_widgets.dart';
 
 class DetailPage extends StatefulWidget {

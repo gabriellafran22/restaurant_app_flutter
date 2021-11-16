@@ -14,40 +14,30 @@ class DatabaseHelper {
   }
 
   Future<List<Restaurant>> getAllFavoriteRestaurant() async{
-    print('get all fav resto helper');
     final db = await database;
-    print('get all fav resto helper 2');
     List<Map<String, dynamic>> results = await db!.query(_tblFavorites);
-    print('get all fav resto helper 3');
 
     return results.map((res) => Restaurant.fromJson(res)).toList();
   }
 
   Future<Map> getFavoriteRestaurantById(String id) async {
     final db = await database;
-    print('get fav resto by id $id 1');
     List<Map<String, dynamic>> results = await db!.query(
         _tblFavorites,
       where: 'id =?',
       whereArgs: [id],
     );
-    print('get fav resto by id $id 2');
 
     if(results.isNotEmpty){
-      print('get fav resto by id $id if return first ');
       return results.first;
     }
-    print('get fav resto by id $id return null');
 
     return {};
   }
 
   Future<void> insertFavoriteRestaurant(Restaurant restaurant) async {
-    print('add fav resto helper ${restaurant.id} 1');
     final db = await database;
-    print('add fav resto helper ${restaurant.id} 2');
     await db!.insert(_tblFavorites, restaurant.toJson());
-    print('add fav resto helper ${restaurant.id} 3');
   }
 
   Future<void> removeFavoriteRestaurant(String id) async {
