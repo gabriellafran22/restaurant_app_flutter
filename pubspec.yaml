@@ -28,7 +28,6 @@ dependencies:
   android_alarm_manager: ^2.0.2
   flutter_local_notifications: ^9.1.2
   shared_preferences: ^2.0.8
-  mockito: ^5.0.16
 
 dev_dependencies:
   flutter_test:
