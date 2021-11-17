@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_offline/flutter_offline.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
+import 'package:restaurant_app/common/navigation.dart';
 import 'package:restaurant_app/provider/restaurant_provider.dart';
 import 'package:restaurant_app/widgets/custom_widgets.dart';
 import 'package:restaurant_app/widgets/restaurant_card.dart';
@@ -41,6 +42,7 @@ Widget _restaurantList() {
         return Center(
           child: JumpingDotsProgressIndicator(
             fontSize: 60,
+            color: Colors.red,
           ),
         );
       } else if (state.state == ResultState.hasData) {
@@ -56,10 +58,8 @@ Widget _restaurantList() {
                   height: 5,
                 ),
                 InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(context, DetailPage.routeName,
-                        arguments: restaurant[index].id);
-                  },
+                  onTap: () => Navigation.intentWithData(
+                      DetailPage.routeName, restaurant[index].id),
                   child: restaurantCard(restaurant[index]),
                 ),
                 const Divider(

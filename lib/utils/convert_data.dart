@@ -1,7 +1,8 @@
 import 'package:restaurant_app/data/model/restaurant.dart';
 
-Restaurant convertRestaurantDetailToRestaurant(RestaurantDetail restaurantDetail){
-  return  Restaurant(
+Restaurant convertRestaurantDetailToRestaurant(
+    RestaurantDetail restaurantDetail) {
+  return Restaurant(
       id: restaurantDetail.id,
       name: restaurantDetail.name,
       description: restaurantDetail.description,

@@ -9,20 +9,21 @@ class DatabaseProvider extends ChangeNotifier {
   ResultState _state = ResultState.noData;
   String _message = '';
 
-  DatabaseProvider({required this.databaseHelper}){
+  DatabaseProvider({required this.databaseHelper}) {
     _getAllFavoriteRestaurant();
   }
 
   String get message => _message;
+
   ResultState get state => _state;
+
   List<Restaurant> get allFavoriteRestaurant => _allFavoriteRestaurant;
 
   void _getAllFavoriteRestaurant() async {
     _allFavoriteRestaurant = await databaseHelper.getAllFavoriteRestaurant();
-    if(_allFavoriteRestaurant.isNotEmpty) {
+    if (_allFavoriteRestaurant.isNotEmpty) {
       _state = ResultState.hasData;
-    }
-    else {
+    } else {
       _state = ResultState.noData;
       _message = 'Empty Data';
     }
@@ -34,8 +35,7 @@ class DatabaseProvider extends ChangeNotifier {
     try {
       await databaseHelper.insertFavoriteRestaurant(restaurant);
       _getAllFavoriteRestaurant();
-    }
-    catch (e) {
+    } catch (e) {
       _state = ResultState.error;
       _message = 'Error: $e';
       notifyListeners();
@@ -46,8 +46,7 @@ class DatabaseProvider extends ChangeNotifier {
     try {
       await databaseHelper.removeFavoriteRestaurant(id);
       _getAllFavoriteRestaurant();
-    }
-    catch (e) {
+    } catch (e) {
       _state = ResultState.error;
       _message = 'Error: $e';
       notifyListeners();
@@ -55,9 +54,8 @@ class DatabaseProvider extends ChangeNotifier {
   }
 
   Future<bool> isFavorited(String id) async {
-    final favoritedRestaurant = await databaseHelper.getFavoriteRestaurantById(id);
+    final favoritedRestaurant =
+        await databaseHelper.getFavoriteRestaurantById(id);
     return favoritedRestaurant.isNotEmpty;
   }
-
-
 }

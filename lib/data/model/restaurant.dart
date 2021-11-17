@@ -28,6 +28,13 @@ class RestaurantResult {
         restaurants: List<Restaurant>.from(
             json["restaurants"].map((x) => Restaurant.fromJson(x))),
       );
+
+  Map<String, dynamic> toJson() => {
+        "error": error,
+        "message": message,
+        "count": count,
+        "restaurants": List<dynamic>.from(restaurants.map((x) => x.toJson())),
+      };
 }
 
 class RestaurantSearchResult {
@@ -77,13 +84,13 @@ class Restaurant {
       );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "description": description,
-    "city": city,
-    "pictureId": pictureId,
-    "rating": rating,
-  };
+        "id": id,
+        "name": name,
+        "description": description,
+        "city": city,
+        "pictureId": pictureId,
+        "rating": rating,
+      };
 }
 
 class RestaurantDetailResult {
@@ -147,17 +154,18 @@ class RestaurantDetail {
       );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "description": description,
-    "city": city,
-    "address": address,
-    "pictureId": pictureId,
-    "rating": rating,
-    "categories": List<dynamic>.from(categories.map((x) => x.toJson())),
-    "menus": menus.toJson(),
-    "customerReviews": List<dynamic>.from(customerReviews.map((x) => x.toJson())),
-  };
+        "id": id,
+        "name": name,
+        "description": description,
+        "city": city,
+        "address": address,
+        "pictureId": pictureId,
+        "rating": rating,
+        "categories": List<dynamic>.from(categories.map((x) => x.toJson())),
+        "menus": menus.toJson(),
+        "customerReviews":
+            List<dynamic>.from(customerReviews.map((x) => x.toJson())),
+      };
 }
 
 class Category {
@@ -172,8 +180,8 @@ class Category {
       );
 
   Map<String, dynamic> toJson() => {
-    "name": name,
-  };
+        "name": name,
+      };
 }
 
 class CustomerReview {
@@ -194,10 +202,10 @@ class CustomerReview {
       );
 
   Map<String, dynamic> toJson() => {
-    "name": name,
-    "review": review,
-    "date": date,
-  };
+        "name": name,
+        "review": review,
+        "date": date,
+      };
 }
 
 class Menus {
@@ -216,9 +224,9 @@ class Menus {
       );
 
   Map<String, dynamic> toJson() => {
-    "foods": List<dynamic>.from(foods.map((x) => x.toJson())),
-    "drinks": List<dynamic>.from(drinks.map((x) => x.toJson())),
-  };
+        "foods": List<dynamic>.from(foods.map((x) => x.toJson())),
+        "drinks": List<dynamic>.from(drinks.map((x) => x.toJson())),
+      };
 }
 
 class Foods {
@@ -233,8 +241,8 @@ class Foods {
       );
 
   Map<String, dynamic> toJson() => {
-    "name": name,
-  };
+        "name": name,
+      };
 }
 
 class Drinks {
@@ -249,6 +257,6 @@ class Drinks {
       );
 
   Map<String, dynamic> toJson() => {
-    "name": name,
-  };
+        "name": name,
+      };
 }

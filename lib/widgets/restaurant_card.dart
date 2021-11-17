@@ -14,9 +14,10 @@ Widget restaurantCard(Restaurant restaurant) {
           Expanded(
             flex: 1,
             child: Hero(
-                tag: restaurant.pictureId,
-                child: Image.network(
-                    "https://restaurant-api.dicoding.dev/images/medium/${restaurant.pictureId}")),
+              tag: restaurant.pictureId,
+              child: Image.network(
+                  "https://restaurant-api.dicoding.dev/images/medium/${restaurant.pictureId}"),
+            ),
           ),
           Expanded(
             flex: 2,
@@ -51,7 +52,7 @@ Widget restaurantCard(Restaurant restaurant) {
                       iconAndTextRow(Icons.star, restaurant.rating.toString(),
                           Colors.yellow),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),

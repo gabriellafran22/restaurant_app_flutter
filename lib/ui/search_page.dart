@@ -106,6 +106,7 @@ Widget _resultHandler(BuildContext context, RestaurantProvider state) {
     return Center(
       child: JumpingDotsProgressIndicator(
         fontSize: 60,
+        color: Colors.red,
       ),
     );
   } else if (state.state == ResultState.hasData) {

@@ -10,7 +10,7 @@ class RestaurantProvider extends ChangeNotifier {
   late String query;
 
   RestaurantProvider({required this.apiService}) {
-    _fetchAllRestaurant();
+    fetchAllRestaurant();
   }
 
   RestaurantProvider.search({required this.apiService, required this.query}) {
@@ -37,7 +37,7 @@ class RestaurantProvider extends ChangeNotifier {
 
   ResultState get state => _state;
 
-  Future<dynamic> _fetchAllRestaurant() async {
+  Future<dynamic> fetchAllRestaurant() async {
     try {
       _state = ResultState.loading;
       notifyListeners();

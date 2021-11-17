@@ -1,4 +1,3 @@
-
 import 'package:restaurant_app/data/model/restaurant.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -9,11 +8,11 @@ class DatabaseHelper {
 
   factory DatabaseHelper() => _instance ?? DatabaseHelper._internal();
 
-  DatabaseHelper._internal(){
+  DatabaseHelper._internal() {
     _instance = this;
   }
 
-  Future<List<Restaurant>> getAllFavoriteRestaurant() async{
+  Future<List<Restaurant>> getAllFavoriteRestaurant() async {
     final db = await database;
     List<Map<String, dynamic>> results = await db!.query(_tblFavorites);
 
@@ -23,12 +22,12 @@ class DatabaseHelper {
   Future<Map> getFavoriteRestaurantById(String id) async {
     final db = await database;
     List<Map<String, dynamic>> results = await db!.query(
-        _tblFavorites,
+      _tblFavorites,
       where: 'id =?',
       whereArgs: [id],
     );
 
-    if(results.isNotEmpty){
+    if (results.isNotEmpty) {
       return results.first;
     }
 
@@ -60,20 +59,17 @@ class DatabaseHelper {
     var db = openDatabase(
       '$path/restaurant_app.db',
       onCreate: (db, version) async {
-        await db.execute(
-          '''CREATE TABLE $_tblFavorites
+        await db.execute('''CREATE TABLE $_tblFavorites
           (id TEXT PRIMARY KEY,
           name TEXT,
           description TEXT,
           pictureId TEXT,
           city TEXT,
           rating REAL)
-          '''
-        );
+          ''');
       },
       version: 1,
     );
     return db;
   }
-
 }

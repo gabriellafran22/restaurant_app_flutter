@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_offline/flutter_offline.dart';
 import 'package:progress_indicators/progress_indicators.dart';
 import 'package:provider/provider.dart';
+import 'package:restaurant_app/common/navigation.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/data/model/restaurant.dart';
 import 'package:restaurant_app/provider/database_provider.dart';
 import 'package:restaurant_app/provider/restaurant_provider.dart';
-import 'package:restaurant_app/utils/utils.dart';
+import 'package:restaurant_app/utils/convert_data.dart';
 import 'package:restaurant_app/widgets/custom_widgets.dart';
 
 class DetailPage extends StatefulWidget {
@@ -37,6 +38,7 @@ class _DetailPageState extends State<DetailPage> {
                         return Center(
                           child: JumpingDotsProgressIndicator(
                             fontSize: 60,
+                            color: Colors.red,
                           ),
                         );
                       } else if (state.state == ResultState.hasData) {
@@ -48,7 +50,7 @@ class _DetailPageState extends State<DetailPage> {
                         return Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
+                            children: <Widget>[
                               const Icon(
                                 Icons.error_outline,
                                 size: 50,
@@ -126,9 +128,7 @@ Widget _restaurantDetailView(
                   backgroundColor: Colors.black12.withOpacity(0.6),
                   child: IconButton(
                     icon: const Icon(Icons.arrow_back),
-                    onPressed: () => Navigator.pop(
-                      context,
-                    ),
+                    onPressed: () => Navigation.back(),
                   ),
                 ),
               ),
@@ -142,7 +142,7 @@ Widget _restaurantDetailView(
             children: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
+                children:  <Widget>[
                   Text(
                     restaurant.name,
                     style: const TextStyle(
