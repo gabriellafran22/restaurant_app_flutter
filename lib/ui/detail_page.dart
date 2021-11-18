@@ -47,18 +47,8 @@ class _DetailPageState extends State<DetailPage> {
                       } else if (state.state == ResultState.noData) {
                         return Center(child: Text(state.message));
                       } else if (state.state == ResultState.error) {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              const Icon(
-                                Icons.error_outline,
-                                size: 50,
-                              ),
-                              contentText(state.message),
-                            ],
-                          ),
-                        );
+                        return iconAndTextColumn(
+                            Icons.error_outlined, state.message);
                       } else {
                         return const Center(child: Text(''));
                       }
@@ -85,18 +75,7 @@ class _DetailPageState extends State<DetailPage> {
               } else if (state.state == ResultState.noData) {
                 return Center(child: Text(state.message));
               } else if (state.state == ResultState.error) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.error_outline,
-                        size: 50,
-                      ),
-                      contentText(state.message),
-                    ],
-                  ),
-                );
+                return iconAndTextColumn(Icons.error_outlined, state.message);
               } else {
                 return const Center(child: Text(''));
               }
@@ -142,7 +121,7 @@ Widget _restaurantDetailView(
             children: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children:  <Widget>[
+                children: <Widget>[
                   Text(
                     restaurant.name,
                     style: const TextStyle(
