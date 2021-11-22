@@ -19,8 +19,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool notif = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -50,7 +50,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<RestaurantProvider>(
-          create: (_) => RestaurantProvider(apiService: ApiService()),
+          create: (_) =>
+              RestaurantProvider(apiService: ApiService()),
         ),
         ChangeNotifierProvider<DatabaseProvider>(
           create: (_) => DatabaseProvider(databaseHelper: DatabaseHelper()),
@@ -69,7 +70,7 @@ class MyApp extends StatelessWidget {
       child: Consumer<PreferencesProvider>(
         builder: (context, state, child) {
           return MaterialApp(
-            title: 'Flutter Demo',
+            title: 'Restaurant App',
             theme: ThemeData(
               primarySwatch: Colors.red,
               textTheme: GoogleFonts.ubuntuTextTheme(),

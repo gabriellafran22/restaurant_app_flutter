@@ -122,10 +122,12 @@ Widget _restaurantDetailView(
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(
-                    restaurant.name,
-                    style: const TextStyle(
-                        fontSize: 30, fontWeight: FontWeight.bold),
+                  Expanded(
+                    child: Text(
+                      restaurant.name,
+                      style: const TextStyle(
+                          fontSize: 30, fontWeight: FontWeight.bold),
+                    ),
                   ),
                   _favoriteButton(restaurant.id, restaurant),
                 ],
